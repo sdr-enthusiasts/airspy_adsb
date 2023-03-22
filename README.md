@@ -61,8 +61,6 @@ services:
     container_name: readsb
     hostname: readsb
     restart: always
-    devices:
-      - /dev/bus/usb:/dev/bus/usb
     ports:
       - 8080:8080
     environment:
