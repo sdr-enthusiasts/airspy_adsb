@@ -109,7 +109,7 @@ fi
 # Handle architecture
 if [[ -z "$AIRSPY_ADSB_ARCH" ]]; then
 
-    echo "[airspy_adsb] Autodetecting architecture"
+    echo "[airspy_adsb] Autodetecting architecture."
 
     # Determine which architecture binary is supported, else fail.
     if /usr/local/bin/airspy_adsb.arm64 -h > /dev/null 2>&1; then
