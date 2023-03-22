@@ -26,3 +26,57 @@ Docker container running AirSpy's `airspy_adsb` receiver. Designed to work in ta
 | `AIRSPY_ADSB_BIAS_TEE` | `-b` | Set to `true` to enable Bias-Tee | *unset* |
 | `AIRSPY_ADSB_BIT_PACKING` | `-p` | Set to `true` to enable Bit Packing | *unset* |
 | `AIRSPY_ADSB_VERBOSE` | `-v` | Enable Verbose mode | *unset* |
+
+## Using with `readsb`
+
+```yaml
+version: '3.8'
+
+volumes:
+  readsbpb_rrd:
+
+services:
+  airspy_adsb:
+    build: https://github.com/sdr-enthusiasts/adsb_airspy.git#main
+    tty: true
+    container_name: airspy_adsb
+    hostname: airspy_adsb
+    restart: always
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    environment:
+      - AIRSPY_ADSB_VERBOSE=true
+      - AIRSPY_ADSB_TIMEOUT=90
+      - AIRSPY_ADSB_FEC_BITS=1
+      - AIRSPY_ADSB_WHITELIST_THRESHOLD=5
+      - AIRSPY_ADSB_PREAMBLE_FILTER_NONCRC=8
+      - AIRSPY_ADSB_CPUTIME_TARGET=60
+      - AIRSPY_ADSB_PREAMBLE_FILTER_MAX=20
+      - AIRSPY_ADSB_MLAT_FREQ=12
+      - AIRSPY_ADSB_RF_GAIN=auto
+
+  readsb:
+    image: ghcr.io/sdr-enthusiasts/docker-readsb-protobuf:latest
+    tty: true
+    container_name: readsb
+    hostname: readsb
+    restart: always
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    ports:
+      - 8080:8080
+    environment:
+      - TZ=${FEEDER_TZ}
+      - READSB_LAT=${FEEDER_LAT}
+      - READSB_LON=${FEEDER_LONG}
+      - READSB_RX_LOCATION_ACCURACY=2
+      - READSB_STATS_RANGE=true
+      - READSB_NET_ENABLE=true
+      - READSB_NAT_ONLY=true
+      - READSB_NET_CONNECTOR=airspy_adsb,30005,beast_in
+    volumes:
+      - readsbpb_rrd:/run/collectd
+    tmpfs:
+      - /run/readsb
+      - /var/log
+```
