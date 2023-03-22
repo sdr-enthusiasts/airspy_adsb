@@ -30,7 +30,6 @@ It will provide BEAST protocol on TCP port `30005`.
 | `AIRSPY_ADSB_VERBOSE` | `-v` | Enable Verbose mode | *unset* |
 | `AIRSPY_ADSB_ARCH` | N/A | Forces a specific architecture binary. Supports `arm64`, `armv7`, `arm`, `nehalem`, `x86_64` or `i386`. If unset, will auto-detect. | *unset* |
 
-
 ## Using with `readsb`
 
 ```yaml
