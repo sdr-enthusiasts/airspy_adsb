@@ -85,7 +85,7 @@ RUN set -x && \
     chmod -v a+x /usr/local/bin/airspy_adsb.* && \
     #
     # Clean-up
-    rm -rm /tmp/*
+    rm -v /tmp/*
 
 EXPOSE 30005
 
