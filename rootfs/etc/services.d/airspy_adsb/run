@@ -109,23 +109,23 @@ fi
 # Determine which architecture binary is supported, else fail.
 if /usr/local/bin/airspy_adsb.aarch64 -h > /dev/null 2>&1; then
     AIRSPY_ADSB_BIN="/usr/local/bin/airspy_adsb.aarch64"
-    echo "Using aarch64 binary"
+    echo "Using aarch64 binary" | stdbuf -oL awk '{print "[airspy_adsb] " $0}'
 elif /usr/local/bin/airspy_adsb.armhf -h > /dev/null 2>&1; then
     AIRSPY_ADSB_BIN="/usr/local/bin/airspy_adsb.armhf"
-    echo "Using armhf binary"
+    echo "Using armhf binary" | stdbuf -oL awk '{print "[airspy_adsb] " $0}'
 elif /usr/local/bin/airspy_adsb.i386 -h > /dev/null 2>&1; then
     AIRSPY_ADSB_BIN="/usr/local/bin/airspy_adsb.i386"
-    echo "Using i386 binary"
+    echo "Using i386 binary" | stdbuf -oL awk '{print "[airspy_adsb] " $0}'
 elif /usr/local/bin/airspy_adsb.x86_64 -h > /dev/null 2>&1; then
     AIRSPY_ADSB_BIN="/usr/local/bin/airspy_adsb.x86_64"
-    echo "Using x86_64 binary"
+    echo "Using x86_64 binary" | stdbuf -oL awk '{print "[airspy_adsb] " $0}'
 else
-    >&2 echo "ERROR: Unsupported architecture: $(uname -m)!"
+    >&2 echo "ERROR: Unsupported architecture: $(uname -m)!" | stdbuf -oL awk '{print "[airspy_adsb] " $0}'
     sleep infinity 
 fi
 
 # Execute binary with arguments prepared above
-echo "Running: airspy_adsb" "${AIRSPY_ADSB_CMD[@]}"
+echo "Running: airspy_adsb" "${AIRSPY_ADSB_CMD[@]}" | stdbuf -oL awk '{print "[airspy_adsb] " $0}'
 
 #shellcheck disable=SC2016
 "${AIRSPY_ADSB_BIN}" "${AIRSPY_ADSB_CMD[@]}" \
