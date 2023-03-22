@@ -82,6 +82,11 @@ RUN set -x && \
     mv -v /tmp/airspy_adsb /usr/local/bin/airspy_adsb.x86_64 && \
     #
     # Ensure all binaries are executable
-    chmod -v a+x /usr/local/bin/airspy_adsb.*
+    chmod -v a+x /usr/local/bin/airspy_adsb.* && \
+    #
+    # Clean-up
+    rm -rm /tmp/*
 
 EXPOSE 30005
+
+HEALTHCHECK --interval=60s --timeout=60s --start-period=30s --retries=3 CMD [ "/scripts/healthcheck.sh" ]
