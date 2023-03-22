@@ -4,6 +4,8 @@ Docker container running AirSpy's `airspy_adsb` receiver. Designed to work in ta
 
 `airspy_adsb` receives ADS-B data, and provides a BEAST socket for other containers to consume BEAST data.
 
+It will provide BEAST protocol on TCP port `30005`.
+
 ## Environment Variables
 
 | Environment Variable | `airspy_adsb`</br>option | Description | Default |
