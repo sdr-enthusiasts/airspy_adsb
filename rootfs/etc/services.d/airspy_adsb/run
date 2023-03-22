@@ -1,0 +1,135 @@
+#!/usr/bin/with-contenv bash
+#shellcheck shell=bash
+
+# Add a beast listener
+AIRSPY_ADSB_CMD=("-l" "30005:Beast")
+
+# Handle "-s"
+if [[ -n "$AIRSPY_ADSB_SERIAL" ]]; then
+    AIRSPY_ADSB_CMD+=("-s")
+    AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_SERIAL}")
+fi
+
+# Handle "-t"
+if [[ -n "$AIRSPY_ADSB_TIMEOUT" ]]; then
+    AIRSPY_ADSB_CMD+=("-t")
+    AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_TIMEOUT}")
+fi
+
+# Handle "-g"
+if [[ -n "$AIRSPY_ADSB_RF_GAIN" ]]; then
+    AIRSPY_ADSB_CMD+=("-g")
+    AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_RF_GAIN}")
+fi
+
+# Handle "-f"
+if [[ -n "$AIRSPY_ADSB_FEC_BITS" ]]; then
+    AIRSPY_ADSB_CMD+=("-f")
+    AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_FEC_BITS}")
+fi
+
+# Handle "-e"
+if [[ -n "$AIRSPY_ADSB_PREAMBLE_FILTER" ]]; then
+    AIRSPY_ADSB_CMD+=("-e")
+    AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_PREAMBLE_FILTER}")
+fi
+
+# Handle "-C"
+if [[ -n "$AIRSPY_ADSB_CPUTIME_TARGET" ]]; then
+    AIRSPY_ADSB_CMD+=("-C")
+    AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_CPUTIME_TARGET}")
+fi
+
+# Handle "-E"
+if [[ -n "$AIRSPY_ADSB_PREAMBLE_FILTER_MAX" ]]; then
+    AIRSPY_ADSB_CMD+=("-E")
+    AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_PREAMBLE_FILTER_MAX}")
+fi
+
+# Handle "-P"
+if [[ -n "$AIRSPY_ADSB_PREAMBLE_FILTER_NONCRC" ]]; then
+    AIRSPY_ADSB_CMD+=("-P")
+    AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_PREAMBLE_FILTER_NONCRC}")
+fi
+
+# Handle "-w"
+if [[ -n "$AIRSPY_ADSB_WHITELIST_THRESHOLD" ]]; then
+    AIRSPY_ADSB_CMD+=("-w")
+    AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_WHITELIST_THRESHOLD}")
+fi
+
+# Handle "-m"
+if [[ -n "$AIRSPY_ADSB_MLAT_FREQ" ]]; then
+    AIRSPY_ADSB_CMD+=("-m")
+    AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_MLAT_FREQ}")
+fi
+
+# Handle "-n"
+if [[ "${AIRSPY_ADSB_VERBATIM_MODE^^}" == "TRUE" ]]; then
+    AIRSPY_ADSB_CMD+=("-n")
+fi
+
+# Handle "-x"
+if [[ "${AIRSPY_ADSB_DX_MODE^^}" == "TRUE" ]]; then
+    AIRSPY_ADSB_CMD+=("-x")
+fi
+
+# Handle "-r"
+if [[ "${AIRSPY_ADSB_REDUCE_IF_BW^^}" == "TRUE" ]]; then
+    AIRSPY_ADSB_CMD+=("-r")
+fi
+
+# Handle "-R"
+if [[ -n "$AIRSPY_ADSB_RSSI_MODE" ]]; then
+    AIRSPY_ADSB_CMD+=("-R")
+    AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_RSSI_MODE}")
+fi
+
+# Handle "-D"
+if [[ -n "$AIRSPY_ADSB_IGNORE_DF_TYPES" ]]; then
+    AIRSPY_ADSB_CMD+=("-D")
+    AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_IGNORE_DF_TYPES}")
+fi
+
+# Handle "-b"
+if [[ "${AIRSPY_ADSB_BIAS_TEE^^}" == "TRUE" ]]; then
+    AIRSPY_ADSB_CMD+=("-b")
+fi
+
+# Handle "-p"
+if [[ "${AIRSPY_ADSB_BIT_PACKING^^}" == "TRUE" ]]; then
+    AIRSPY_ADSB_CMD+=("-p")
+fi
+
+# Handle "-v"
+if [[ "${AIRSPY_ADSB_VERBOSE^^}" == "TRUE" ]]; then
+    AIRSPY_ADSB_CMD+=("-v")
+fi
+
+# Determine which architecture binary is supported, else fail.
+if /usr/local/bin/airspy_adsb.aarch64 -h > /dev/null 2>&1; then
+    AIRSPY_ADSB_BIN="/usr/local/bin/airspy_adsb.aarch64"
+    echo "Using aarch64 binary"
+elif /usr/local/bin/airspy_adsb.armhf -h > /dev/null 2>&1; then
+    AIRSPY_ADSB_BIN="/usr/local/bin/airspy_adsb.armhf"
+    echo "Using armhf binary"
+elif /usr/local/bin/airspy_adsb.i386 -h > /dev/null 2>&1; then
+    AIRSPY_ADSB_BIN="/usr/local/bin/airspy_adsb.i386"
+    echo "Using i386 binary"
+elif /usr/local/bin/airspy_adsb.x86_64 -h > /dev/null 2>&1; then
+    AIRSPY_ADSB_BIN="/usr/local/bin/airspy_adsb.x86_64"
+    echo "Using x86_64 binary"
+else
+    >&2 echo "ERROR: Unsupported architecture: $(uname -m)!"
+    sleep infinity 
+fi
+
+# Execute binary with arguments prepared above
+echo "Running: airspy_adsb" "${AIRSPY_ADSB_CMD[@]}"
+
+#shellcheck disable=SC2016
+"${AIRSPY_ADSB_BIN}" "${AIRSPY_ADSB_CMD[@]}" \
+  2>&1 | stdbuf -oL awk '{print "[airspy_adsb] " $0}'
+
+# Slow down restarts
+sleep 10
