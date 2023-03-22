@@ -56,3 +56,5 @@ RUN set -x && \
     mv -v /tmp/airspy_adsb /usr/local/bin/airspy_adsb.i386 && \
     # Ensure all binaries are executable
     chmod -v a+x /usr/local/bin/airspy_adsb.*
+
+EXPOSE 30005
