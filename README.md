@@ -26,6 +26,8 @@ Docker container running AirSpy's `airspy_adsb` receiver. Designed to work in ta
 | `AIRSPY_ADSB_BIAS_TEE` | `-b` | Set to `true` to enable Bias-Tee | *unset* |
 | `AIRSPY_ADSB_BIT_PACKING` | `-p` | Set to `true` to enable Bit Packing | *unset* |
 | `AIRSPY_ADSB_VERBOSE` | `-v` | Enable Verbose mode | *unset* |
+| `AIRSPY_ADSB_ARCH` | N/A | Forces a specific architecture binary. Supports `arm64`, `armv7`, `arm`, `nehalem`, `x86_64` or `i386`. If unset, will auto-detect. | *unset* |
+
 
 ## Using with `readsb`
 
