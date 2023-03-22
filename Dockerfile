@@ -7,7 +7,6 @@ RUN set -x && \
     # Install libusb
     apt-get update -y && \
     apt-get install --no-install-recommends -y libusb-1.0-0 && \
-    apt-get -v clean && \
     #
     # Download airspy_adsb arm binary
     curl \
@@ -85,7 +84,8 @@ RUN set -x && \
     chmod -v a+x /usr/local/bin/airspy_adsb.* && \
     #
     # Clean-up
-    rm -v /tmp/*
+    apt-get -v clean && \
+    rm -rfv /tmp/* /var/lib/apt/lists/*
 
 EXPOSE 30005
 
