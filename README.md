@@ -40,7 +40,7 @@ volumes:
 
 services:
   airspy_adsb:
-    build: https://github.com/sdr-enthusiasts/adsb_airspy.git#main
+    image: ghcr.io/sdr-enthusiasts/airspy_adsb:latest
     tty: true
     container_name: airspy_adsb
     hostname: airspy_adsb
