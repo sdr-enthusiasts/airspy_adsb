@@ -73,7 +73,7 @@ services:
       - READSB_RX_LOCATION_ACCURACY=2
       - READSB_STATS_RANGE=true
       - READSB_NET_ENABLE=true
-      - READSB_NAT_ONLY=true
+      - READSB_NET_ONLY=true
       - READSB_NET_CONNECTOR=airspy_adsb,30005,beast_in
     volumes:
       - readsbpb_rrd:/run/collectd
