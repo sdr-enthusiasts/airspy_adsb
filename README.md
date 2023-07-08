@@ -28,6 +28,7 @@ It will provide BEAST protocol on TCP port `30005`.
 | `AIRSPY_ADSB_BIAS_TEE` | `-b` | Set to `true` to enable Bias-Tee | *unset* |
 | `AIRSPY_ADSB_BIT_PACKING` | `-p` | Set to `true` to enable Bit Packing | *unset* |
 | `AIRSPY_ADSB_VERBOSE` | `-v` | Enable Verbose mode | *unset* |
+| `AIRSPY_ADSB_STATS` | `-S` | Set to `true` to enable statistics in `/run/airspy_adsb` (this needs to be shared with a `tar1090` instance) | *unset* |
 | `AIRSPY_ADSB_ARCH` | N/A | Forces a specific architecture binary. Supports `arm64`, `armv7`, `arm`, `nehalem`, `x86_64` or `i386`. If unset, will auto-detect. | *unset* |
 
 ## Using with `readsb`
