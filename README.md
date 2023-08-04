@@ -1,6 +1,6 @@
 # sdr-enthusiasts/airspy_adsb
 
-Docker container running AirSpy's `airspy_adsb` receiver. Designed to work in tandem with other sdr-enthusiasts containers. Builds and runs on i386, x86_64, arm64 and arm32v7.
+Docker container running AirSpy's `airspy_adsb` receiver. Designed to work in tandem with other sdr-enthusiasts containers. Builds and runs on x86_64, arm64 and arm32v7.
 
 `airspy_adsb` receives ADS-B data, and provides a BEAST socket for other containers to consume BEAST data.
 
