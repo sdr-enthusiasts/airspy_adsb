@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/command/with-contenv bash
 #shellcheck shell=bash
 
 # Import healthchecks-framework
