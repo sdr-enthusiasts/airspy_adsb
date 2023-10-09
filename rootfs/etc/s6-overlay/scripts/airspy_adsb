@@ -134,10 +134,10 @@ if [[ -z "$AIRSPY_ADSB_ARCH" ]]; then
 
     elif /usr/local/bin/airspy_adsb.i386 -h > /dev/null 2>&1; then
         AIRSPY_ADSB_ARCH="i386"
-        
+
     else
         >&2 echo "[airspy_adsb] ERROR: Unsupported architecture: $(uname -m)!"
-        sleep infinity 
+        sleep infinity
     fi
 fi
 
@@ -147,13 +147,13 @@ AIRSPY_ADSB_BIN="/usr/local/bin/airspy_adsb.${AIRSPY_ADSB_ARCH}"
 # Ensure binary exists
 if [[ ! -x "$AIRSPY_ADSB_BIN" ]]; then
     >&2 echo "[airspy_adsb] ERROR: Executable binary not found for architecture: $AIRSPY_ADSB_ARCH!"
-        sleep infinity 
+        sleep infinity
 fi
 
 # Ensure binary runnable
 if ! "$AIRSPY_ADSB_BIN" -h > /dev/null 2>&1; then
     >&2 echo "[airspy_adsb] ERROR: Executable $AIRSPY_ADSB_ARCH binary not supported on $(uname -m) architecture!"
-        sleep infinity 
+        sleep infinity
 fi
 
 # Execute binary with arguments prepared above

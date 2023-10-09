@@ -2,6 +2,7 @@ FROM ghcr.io/sdr-enthusiasts/docker-baseimage:base
 
 COPY rootfs/ /
 
+# hadolint ignore=DL3008,DL3003,SC1091
 RUN set -x && \
   #
   # Install libusb
