@@ -1,5 +1,10 @@
 #!/command/with-contenv bash
-#shellcheck shell=bash
+#shellcheck shell=bash disable=SC1091
+
+source /scripts/common
+trap 'pkill -P $$ || true; exit 0' SIGTERM SIGINT SIGHUP SIGQUIT
+
+s6wrap=(s6wrap --quiet --prepend="$(basename "$0")" --timestamps --args)
 
 # Add a beast listener
 AIRSPY_ADSB_CMD=("-l" "30005:Beast")
@@ -65,17 +70,17 @@ if [[ -n "$AIRSPY_ADSB_MLAT_FREQ" ]]; then
 fi
 
 # Handle "-n"
-if [[ "${AIRSPY_ADSB_VERBATIM_MODE^^}" == "TRUE" ]]; then
+if chk_enabled "${AIRSPY_ADSB_VERBATIM_MODE}"; then
     AIRSPY_ADSB_CMD+=("-n")
 fi
 
 # Handle "-x"
-if [[ "${AIRSPY_ADSB_DX_MODE^^}" == "TRUE" ]]; then
+if chk_enabled "${AIRSPY_ADSB_DX_MODE}"; then
     AIRSPY_ADSB_CMD+=("-x")
 fi
 
 # Handle "-r"
-if [[ "${AIRSPY_ADSB_REDUCE_IF_BW^^}" == "TRUE" ]]; then
+if chk_enabled "${AIRSPY_ADSB_REDUCE_IF_BW}"; then
     AIRSPY_ADSB_CMD+=("-r")
 fi
 
@@ -92,29 +97,29 @@ if [[ -n "$AIRSPY_ADSB_IGNORE_DF_TYPES" ]]; then
 fi
 
 # Handle "-b"
-if [[ "${AIRSPY_ADSB_BIAS_TEE^^}" == "TRUE" ]]; then
+if chk_enabled "${AIRSPY_ADSB_BIAS_TEE}"; then
     AIRSPY_ADSB_CMD+=("-b")
 fi
 
 # Handle "-p"
-if [[ "${AIRSPY_ADSB_BIT_PACKING^^}" == "TRUE" ]]; then
+if chk_enabled "${AIRSPY_ADSB_BIT_PACKING}"; then
     AIRSPY_ADSB_CMD+=("-p")
 fi
 
 # Handle "-v"
-if [[ "${AIRSPY_ADSB_VERBOSE^^}" == "TRUE" ]]; then
+if chk_enabled "${AIRSPY_ADSB_VERBOSE}"; then
     AIRSPY_ADSB_CMD+=("-v")
 fi
 
 # Handle "-S"
-if [[ "${AIRSPY_ADSB_STATS^^}" == "TRUE" ]]; then
+if chk_enabled "${AIRSPY_ADSB_STATS}"; then
     AIRSPY_ADSB_CMD+=("-S" "/run/airspy_adsb/stats.json")
 fi
 
 # Handle architecture
 if [[ -z "$AIRSPY_ADSB_ARCH" ]]; then
 
-    echo "[airspy_adsb] Autodetecting architecture."
+    "${s6wrap[@]}" echo "Autodetecting architecture."
 
     # Determine which architecture binary is supported, else fail.
     if /usr/local/bin/airspy_adsb.arm64 -h > /dev/null 2>&1; then
@@ -136,7 +141,7 @@ if [[ -z "$AIRSPY_ADSB_ARCH" ]]; then
         AIRSPY_ADSB_ARCH="i386"
 
     else
-        >&2 echo "[airspy_adsb] ERROR: Unsupported architecture: $(uname -m)!"
+        "${s6wrap[@]}" echo "ERROR: Unsupported architecture: $(uname -m)!"
         sleep infinity
     fi
 fi
@@ -146,23 +151,22 @@ AIRSPY_ADSB_BIN="/usr/local/bin/airspy_adsb.${AIRSPY_ADSB_ARCH}"
 
 # Ensure binary exists
 if [[ ! -x "$AIRSPY_ADSB_BIN" ]]; then
-    >&2 echo "[airspy_adsb] ERROR: Executable binary not found for architecture: $AIRSPY_ADSB_ARCH!"
+    "${s6wrap[@]}" echo "ERROR: Executable binary not found for architecture: $AIRSPY_ADSB_ARCH!"
         sleep infinity
 fi
 
 # Ensure binary runnable
 if ! "$AIRSPY_ADSB_BIN" -h > /dev/null 2>&1; then
-    >&2 echo "[airspy_adsb] ERROR: Executable $AIRSPY_ADSB_ARCH binary not supported on $(uname -m) architecture!"
+    "${s6wrap[@]}" echo "ERROR: Executable $AIRSPY_ADSB_ARCH binary not supported on $(uname -m) architecture!"
         sleep infinity
 fi
 
 # Execute binary with arguments prepared above
-echo "[airspy_adsb] Running $AIRSPY_ADSB_ARCH binary on $(uname -m) architecture."
-echo "[airspy_adsb] Running: airspy_adsb" "${AIRSPY_ADSB_CMD[@]}"
+"${s6wrap[@]}" echo "Running $AIRSPY_ADSB_ARCH binary on $(uname -m) architecture."
+"${s6wrap[@]}" echo "Running: ${AIRSPY_ADSB_BIN} ${AIRSPY_ADSB_CMD[*]}"
 
 #shellcheck disable=SC2016
-"${AIRSPY_ADSB_BIN}" "${AIRSPY_ADSB_CMD[@]}" \
-  2>&1 | stdbuf -oL awk '{print "[airspy_adsb] " $0}'
+"${s6wrap[@]}" "${AIRSPY_ADSB_BIN}" "${AIRSPY_ADSB_CMD[@]}"
 
 # Slow down restarts
 sleep 10
