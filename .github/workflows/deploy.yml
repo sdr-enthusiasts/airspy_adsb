@@ -58,7 +58,7 @@ jobs:
       push_enabled: true
       ghcr_repo_owner: ${{ github.repository_owner }}
       ghcr_repo: ${{ github.repository }}
-      platform_linux_arm32v6_enabled: true
+      platform_linux_arm32v6_enabled: false
       platform_linux_i386_enabled: false
       get_version_method: git_commit_hash_short
       # set build_latest to true if github.event.inputs.use_test_image is false
