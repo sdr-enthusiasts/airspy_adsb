@@ -46,8 +46,8 @@ services:
     container_name: airspy_adsb
     hostname: airspy_adsb
     restart: always
-    devices:
-      - /dev/bus/usb:/dev/bus/usb
+    device_cgroup_rules:
+      - 'c 189:* rwm'
     environment:
       - AIRSPY_ADSB_VERBOSE=true
       - AIRSPY_ADSB_TIMEOUT=90
@@ -58,27 +58,75 @@ services:
       - AIRSPY_ADSB_PREAMBLE_FILTER_MAX=20
       - AIRSPY_ADSB_MLAT_FREQ=12
       - AIRSPY_ADSB_RF_GAIN=auto
+      - AIRSPY_ADSB_STATS=true
+    volumes:
+      - /dev:/dev:ro
+      - /run/airspy_adsb:/run/airspy_adsb
 
-  readsb:
-    image: ghcr.io/sdr-enthusiasts/docker-readsb-protobuf:latest
+
+  ultrafeeder:
+    image: ghcr.io/sdr-enthusiasts/docker-adsb-ultrafeeder:latest
     tty: true
-    container_name: readsb
-    hostname: readsb
-    restart: always
+    container_name: ultrafeeder
+    hostname: ultrafeeder
+    restart: unless-stopped
     ports:
-      - 8080:8080
+      - 8080:80
     environment:
+      - LOGLEVEL=error
       - TZ=${FEEDER_TZ}
       - READSB_LAT=${FEEDER_LAT}
       - READSB_LON=${FEEDER_LONG}
+      - READSB_ALT=${FEEDER_ALT_M}m
       - READSB_RX_LOCATION_ACCURACY=2
       - READSB_STATS_RANGE=true
       - READSB_NET_ENABLE=true
       - READSB_NET_ONLY=true
-      - READSB_NET_CONNECTOR=airspy_adsb,30005,beast_in
+      - ULTRAFEEDER_CONFIG=
+        adsb,dump978,30978,uat_in;
+        adsb,feed.adsb.fi,30004,beast_reduce_plus_out;
+        adsb,in.adsb.lol,30004,beast_reduce_plus_out;
+        adsb,feed.airplanes.live,30004,beast_reduce_plus_out;
+        adsb,feed.planespotters.net,30004,beast_reduce_plus_out;
+        adsb,feed.theairtraffic.com,30004,beast_reduce_plus_out;
+        adsb,data.avdelphi.com,24999,beast_reduce_plus_out;
+        adsb,skyfeed.hpradar.com,30004,beast_reduce_plus_out;
+        adsb,feed.radarplane.com,30001,beast_reduce_plus_out;
+        adsb,dati.flyitalyadsb.com,4905,beast_reduce_plus_out;
+        mlat,feed.adsb.fi,31090,39000;
+        mlat,in.adsb.lol,31090,39001;
+        mlat,feed.airplanes.live,31090,39002;
+        mlat,mlat.planespotters.net,31090,39003;
+        mlat,feed.theairtraffic.com,31090,39004;
+        mlat,skyfeed.hpradar.com,31090,39005;
+        mlat,feed.radarplane.com,31090,39006;
+        mlat,dati.flyitalyadsb.com,30100,39007;
+        mlathub,piaware,30105,beast_in;
+        mlathub,rbfeeder,30105,beast_in;
+        mlathub,radarvirtuel,30105,beast_in;
+        mlathub,planewatch,30105,beast_in
+      - UUID=${MULTIFEEDER_UUID}
+      - MLAT_USER=${FEEDER_NAME}
+      - UPDATE_TAR1090=true
+      - TAR1090_DEFAULTCENTERLAT=${FEEDER_LAT}
+      - TAR1090_DEFAULTCENTERLON=${FEEDER_LONG}
+      - TAR1090_MESSAGERATEINTITLE=true
+      - TAR1090_PAGETITLE=${FEEDER_NAME}
+      - TAR1090_PLANECOUNTINTITLE=true
+      - TAR1090_SITESHOW=true
+      - TAR1090_RANGE_OUTLINE_COLORED_BY_ALTITUDE=true
+      - TAR1090_RANGE_OUTLINE_WIDTH=2.0
+      - TAR1090_RANGERINGSDISTANCES=50,100,150,200
+      - TAR1090_USEROUTEAPI=true
+      - GRAPHS1090_DARKMODE=true
+      - ENABLE_AIRSPY=true
     volumes:
-      - readsbpb_rrd:/run/collectd
+      - /opt/adsb/ultrafeeder/globe_history:/var/globe_history
+      - /opt/adsb/ultrafeeder/graphs1090:/var/lib/collectd
+      - /proc/diskstats:/proc/diskstats:ro
+      - /run/airspy_adsb:/run/airspy_adsb
     tmpfs:
-      - /run/readsb
-      - /var/log
+      - /run:exec,size=256M
+      - /tmp:size=128M
+      - /var/log:size=32M
 ```
