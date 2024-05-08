@@ -113,6 +113,7 @@ fi
 
 # Handle "-S"
 if chk_enabled "${AIRSPY_ADSB_STATS}"; then
+    mkdir -p /run/airspy_adsb
     AIRSPY_ADSB_CMD+=("-S" "/run/airspy_adsb/stats.json")
 fi
 
