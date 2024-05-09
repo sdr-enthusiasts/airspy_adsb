@@ -1,5 +1,7 @@
 FROM ghcr.io/sdr-enthusiasts/docker-baseimage:base
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 # hadolint ignore=DL3008,DL3003,SC1091
 RUN set -x && \
   #

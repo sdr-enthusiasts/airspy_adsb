@@ -173,4 +173,5 @@ sleep 10 &
 "${s6wrap[@]}" "${AIRSPY_ADSB_BIN}" "${AIRSPY_ADSB_CMD[@]}" &
 
 # trap will only work properly while the shell is running / waiting, not while another program is being foreground executed
-wait || true
+# the first wait exits due to the signal which is trapped, the 2nd wait actually waits for collectd to exit
+wait || wait || true
