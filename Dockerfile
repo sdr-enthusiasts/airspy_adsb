@@ -1,13 +1,15 @@
 FROM ghcr.io/sdr-enthusiasts/docker-baseimage:base
 
-COPY rootfs/ /
-
 # hadolint ignore=DL3008,DL3003,SC1091
 RUN set -x && \
   #
-  # Install libusb
+  KEPT_PACKAGES=() && \
+  KEPT_PACKAGES+=(nginx-light) && \
+  KEPT_PACKAGES+=(libusb-1.0.0) && \
   apt-get update -y && \
-  apt-get install --no-install-recommends -y libusb-1.0-0 && \
+  apt-get install --no-install-recommends -y \
+  ${KEPT_PACKAGES[@]} \
+  && \
   #
   # Download airspy_adsb arm binary
   curl \
@@ -87,6 +89,8 @@ RUN set -x && \
   # Clean-up
   apt-get -v clean && \
   rm -rfv /tmp/* /var/lib/apt/lists/*
+
+COPY rootfs/ /
 
 EXPOSE 30005
 
