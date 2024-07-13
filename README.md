@@ -1,6 +1,6 @@
 # sdr-enthusiasts/airspy_adsb
 
-Docker container running AirSpy's `airspy_adsb` receiver. Designed to work in tandem with other sdr-enthusiasts containers. Builds and runs on x86_64, arm64 and arm32v7.
+Docker container running Airspy's `airspy_adsb` receiver. Designed to work in tandem with other sdr-enthusiasts containers. Builds and runs on x86_64, arm64 and arm32v7.
 
 `airspy_adsb` receives ADS-B data, and provides a BEAST socket for other containers to consume BEAST data.
 
@@ -76,7 +76,7 @@ services:
       - "c 189:* rwm"
     ports:
       - 8080:80 # to expose the web interface
-      - 9273-9274:9273-9274 # to expose the statistics interface to Prometheus
+      # - 9273-9274:9273-9274 # to expose the statistics interface to Prometheus
     environment:
       # --------------------------------------------------
       # general parameters:
@@ -170,10 +170,10 @@ services:
       # --------------------------------------------------
       # Prometheus and InfluxDB connection parameters:
       # (See above for the correct image tag you must use to enable this)
-      - INFLUXDBV2_URL=${INFLUX_URL}
-      - INFLUXDBV2_TOKEN=${INFLUX_TOKEN}
-      - INFLUXDBV2_BUCKET=${INFLUX_BUCKET}
-      - PROMETHEUS_ENABLE=true
+      # - INFLUXDBV2_URL=${INFLUX_URL}
+      # - INFLUXDBV2_TOKEN=${INFLUX_TOKEN}
+      # - INFLUXDBV2_BUCKET=${INFLUX_BUCKET}
+      # - PROMETHEUS_ENABLE=true
     volumes:
       - /opt/adsb/ultrafeeder/globe_history:/var/globe_history
       - /opt/adsb/ultrafeeder/graphs1090:/var/lib/collectd
