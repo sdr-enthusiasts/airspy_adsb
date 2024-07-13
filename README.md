@@ -36,7 +36,6 @@ It will provide BEAST protocol on TCP port `30005`.
 Note: the airspy_adsb environment variables in the example below follow [wiedehopf's recommended Airspy defaults](https://github.com/wiedehopf/airspy-conf/blob/master/airspy_adsb.default)
 
 ```yaml
-
 services:
   airspy_adsb:
     image: ghcr.io/sdr-enthusiasts/airspy_adsb:latest
