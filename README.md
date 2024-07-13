@@ -31,13 +31,11 @@ It will provide BEAST protocol on TCP port `30005`.
 | `AIRSPY_ADSB_STATS`                  | `-S`                     | Set to `true` to enable statistics in `/run/airspy_adsb` (this needs to be shared with a `tar1090` instance)                        | _unset_                                                |
 | `AIRSPY_ADSB_ARCH`                   | N/A                      | Forces a specific architecture binary. Supports `arm64`, `armv7`, `arm`, `nehalem`, `x86_64` or `i386`. If unset, will auto-detect. | _unset_                                                |
 
-## Using with `readsb`
+## Using with [`ultrafeeder` container](https://github.com/sdr-enthusiasts/docker-adsb-ultrafeeder)
+
+Note: the airspy_adsb environment variables in the example below follow [wiedehopf's recommended Airspy defaults](https://github.com/wiedehopf/airspy-conf/blob/master/airspy_adsb.default)
 
 ```yaml
-version: "3.8"
-
-volumes:
-  readsbpb_rrd:
 
 services:
   airspy_adsb:
@@ -61,28 +59,57 @@ services:
       - AIRSPY_ADSB_STATS=true
     volumes:
       - /dev:/dev:ro
-      - /run/airspy_adsb:/run/airspy_adsb
+    tmpfs:
+      - /run:exec,size=256M
+      - /tmp:size=128M
+      - /var/log:size=32M
 
-
+services:
   ultrafeeder:
-    image: ghcr.io/sdr-enthusiasts/docker-adsb-ultrafeeder:latest
+    image: ghcr.io/sdr-enthusiasts/docker-adsb-ultrafeeder
+    # Note - if you want to enable telegraf for use with InfluxDB/Prometheus and Grafana,
+    # use the following image instead:
+    # image: ghcr.io/sdr-enthusiasts/docker-adsb-ultrafeeder:telegraf
     tty: true
     container_name: ultrafeeder
     hostname: ultrafeeder
     restart: unless-stopped
+    device_cgroup_rules:
+      - "c 189:* rwm"
     ports:
-      - 8080:80
+      - 8080:80 # to expose the web interface
+      - 9273-9274:9273-9274 # to expose the statistics interface to Prometheus
     environment:
+      # --------------------------------------------------
+      # general parameters:
       - LOGLEVEL=error
       - TZ=${FEEDER_TZ}
+      # --------------------------------------------------
+      # SDR related parameters:
+      ### Set readsb to net-only mode, since we're getting SDR data via BEAST from airspy_adsb
+      - READSB_NET_ONLY=true
+      # - READSB_DEVICE_TYPE=rtlsdr
+      # - READSB_RTLSDR_DEVICE=${ADSB_SDR_SERIAL}
+      # - READSB_RTLSDR_PPM=${ADSB_SDR_PPM}
+      #
+      # --------------------------------------------------
+      # readsb/decoder parameters:
       - READSB_LAT=${FEEDER_LAT}
       - READSB_LON=${FEEDER_LONG}
       - READSB_ALT=${FEEDER_ALT_M}m
+      ### Disable readsb gain, since airspy_adsb is handling that
+      # - READSB_GAIN=${ADSB_SDR_GAIN}
       - READSB_RX_LOCATION_ACCURACY=2
       - READSB_STATS_RANGE=true
-      - READSB_NET_ENABLE=true
-      - READSB_NET_ONLY=true
+      #
+      # --------------------------------------------------
+      # Sources and Aggregator connections:
+      # Notes - remove the ones you are not using / feeding
+      ###     - "adsb,airspy_adsb,30005,beast_in;" is how ultrafeeder gets the BEAST feed out of airspy_adsb
+      #       - remove "adsb,dump978,30978,uat_in;" if you don't have dump978 and a UAT dongle connected to your station
+      #       - !!! make sure that each line ends with a semicolon ";",  with the exception of the last line which shouldn't have a ";" !!!
       - ULTRAFEEDER_CONFIG=
+        adsb,airspy_adsb,30005,beast_in;
         adsb,dump978,30978,uat_in;
         adsb,feed.adsb.fi,30004,beast_reduce_plus_out;
         adsb,in.adsb.lol,30004,beast_reduce_plus_out;
@@ -105,26 +132,56 @@ services:
         mlathub,rbfeeder,30105,beast_in;
         mlathub,radarvirtuel,30105,beast_in;
         mlathub,planewatch,30105,beast_in
+      # If you really want to feed ADSBExchange, you can do so by adding this above:
+      #        adsb,feed1.adsbexchange.com,30004,beast_reduce_plus_out,uuid=${ADSBX_UUID};
+      #        mlat,feed.adsbexchange.com,31090,39008,uuid=${ADSBX_UUID}
+      #
+      # --------------------------------------------------
       - UUID=${MULTIFEEDER_UUID}
       - MLAT_USER=${FEEDER_NAME}
+      #
+      # --------------------------------------------------
+      # TAR1090 (Map Web Page) parameters:
       - UPDATE_TAR1090=true
       - TAR1090_DEFAULTCENTERLAT=${FEEDER_LAT}
       - TAR1090_DEFAULTCENTERLON=${FEEDER_LONG}
       - TAR1090_MESSAGERATEINTITLE=true
       - TAR1090_PAGETITLE=${FEEDER_NAME}
       - TAR1090_PLANECOUNTINTITLE=true
+      - TAR1090_ENABLE_AC_DB=true
+      - TAR1090_FLIGHTAWARELINKS=true
+      - HEYWHATSTHAT_PANORAMA_ID=${FEEDER_HEYWHATSTHAT_ID}
+      - HEYWHATSTHAT_ALTS=${FEEDER_HEYWHATSTHAT_ALTS}
       - TAR1090_SITESHOW=true
       - TAR1090_RANGE_OUTLINE_COLORED_BY_ALTITUDE=true
       - TAR1090_RANGE_OUTLINE_WIDTH=2.0
       - TAR1090_RANGERINGSDISTANCES=50,100,150,200
+      - TAR1090_RANGERINGSCOLORS='#1A237E','#0D47A1','#42A5F5','#64B5F6'
       - TAR1090_USEROUTEAPI=true
+      #
+      # --------------------------------------------------
+      # GRAPHS1090 (Decoder and System Status Web Page) parameters:
+      # The two 978 related parameters should only be included if you are running dump978 for UAT reception (USA only)
       - GRAPHS1090_DARKMODE=true
+      # - ENABLE_978=yes
+      # - URL_978=http://dump978/skyaware978
+      ### Enable Airspy graphs and grab the data via http://airspy_adsb/stats.json
       - ENABLE_AIRSPY=true
+      - URL_AIRSPY=http://airspy_adsb
+      #
+      # --------------------------------------------------
+      # Prometheus and InfluxDB connection parameters:
+      # (See above for the correct image tag you must use to enable this)
+      - INFLUXDBV2_URL=${INFLUX_URL}
+      - INFLUXDBV2_TOKEN=${INFLUX_TOKEN}
+      - INFLUXDBV2_BUCKET=${INFLUX_BUCKET}
+      - PROMETHEUS_ENABLE=true
     volumes:
       - /opt/adsb/ultrafeeder/globe_history:/var/globe_history
       - /opt/adsb/ultrafeeder/graphs1090:/var/lib/collectd
       - /proc/diskstats:/proc/diskstats:ro
-      - /run/airspy_adsb:/run/airspy_adsb
+      ### Don't map the host /dev into the container since the SDR(s) are handled in airspy_adsb / dump978
+      # - /dev:/dev:ro
     tmpfs:
       - /run:exec,size=256M
       - /tmp:size=128M
