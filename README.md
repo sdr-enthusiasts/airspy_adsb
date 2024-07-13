@@ -63,7 +63,6 @@ services:
       - /tmp:size=128M
       - /var/log:size=32M
 
-services:
   ultrafeeder:
     image: ghcr.io/sdr-enthusiasts/docker-adsb-ultrafeeder
     # Note - if you want to enable telegraf for use with InfluxDB/Prometheus and Grafana,
