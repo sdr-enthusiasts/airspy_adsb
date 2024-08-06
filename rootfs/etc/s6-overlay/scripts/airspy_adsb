@@ -142,7 +142,7 @@ if [[ -z "$AIRSPY_ADSB_ARCH" ]]; then
 
     else
         "${s6wrap[@]}" echo "ERROR: Unsupported architecture: $(uname -m)!"
-        exec sleep infinity
+        stop_service
     fi
 fi
 
@@ -152,13 +152,13 @@ AIRSPY_ADSB_BIN="/usr/local/bin/airspy_adsb.${AIRSPY_ADSB_ARCH}"
 # Ensure binary exists
 if [[ ! -x "$AIRSPY_ADSB_BIN" ]]; then
     "${s6wrap[@]}" echo "ERROR: Executable binary not found for architecture: $AIRSPY_ADSB_ARCH!"
-    exec sleep infinity
+    stop_service
 fi
 
 # Ensure binary runnable
 if ! "$AIRSPY_ADSB_BIN" -h > /dev/null 2>&1; then
     "${s6wrap[@]}" echo "ERROR: Executable $AIRSPY_ADSB_ARCH binary not supported on $(uname -m) architecture!"
-    exec sleep infinity
+    stop_service
 fi
 
 # Execute binary with arguments prepared above
