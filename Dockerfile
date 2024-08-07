@@ -29,7 +29,7 @@ RUN set -x && \
   curl \
   --location \
   --output /tmp/airspy_adsb-linux-arm64.tgz \
-  "https://github.com/wiedehopf/airspy-conf/raw/master/buster/airspy_adsb-linux-arm64.tgz" \
+  "https://github.com/wiedehopf/airspy-conf/raw/master/bookworm/airspy_adsb-linux-arm64.tgz" \
   && \
   tar \
   xvf /tmp/airspy_adsb-linux-arm64.tgz \

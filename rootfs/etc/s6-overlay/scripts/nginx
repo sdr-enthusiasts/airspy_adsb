@@ -4,7 +4,7 @@
 source /scripts/common
 
 if ! chk_enabled "${AIRSPY_ADSB_STATS}"; then
-    exec sleep infinity
+    stop_service
 fi
 
 exec s6wrap --quiet --prepend=nginx --timestamps --args /usr/sbin/nginx

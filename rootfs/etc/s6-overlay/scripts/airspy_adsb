@@ -2,7 +2,6 @@
 #shellcheck shell=bash disable=SC1091
 
 source /scripts/common
-trap 'pkill -P $$' SIGTERM SIGINT SIGHUP SIGQUIT
 
 s6wrap=(s6wrap --quiet --prepend="$(basename "$0")" --timestamps --args)
 
@@ -143,7 +142,7 @@ if [[ -z "$AIRSPY_ADSB_ARCH" ]]; then
 
     else
         "${s6wrap[@]}" echo "ERROR: Unsupported architecture: $(uname -m)!"
-        exec sleep infinity
+        stop_service
     fi
 fi
 
@@ -153,13 +152,13 @@ AIRSPY_ADSB_BIN="/usr/local/bin/airspy_adsb.${AIRSPY_ADSB_ARCH}"
 # Ensure binary exists
 if [[ ! -x "$AIRSPY_ADSB_BIN" ]]; then
     "${s6wrap[@]}" echo "ERROR: Executable binary not found for architecture: $AIRSPY_ADSB_ARCH!"
-    exec sleep infinity
+    stop_service
 fi
 
 # Ensure binary runnable
 if ! "$AIRSPY_ADSB_BIN" -h > /dev/null 2>&1; then
     "${s6wrap[@]}" echo "ERROR: Executable $AIRSPY_ADSB_ARCH binary not supported on $(uname -m) architecture!"
-    exec sleep infinity
+    stop_service
 fi
 
 # Execute binary with arguments prepared above
@@ -167,11 +166,11 @@ fi
 "${s6wrap[@]}" echo "Running: ${AIRSPY_ADSB_BIN} ${AIRSPY_ADSB_CMD[*]}"
 
 # Slow down restarts
-sleep 10 &
+# wait 30 seconds if this is not the first startup (this should only happen on crashes or a bad command line, thus this can be a long timeout)
+if [[ $(s6-svdt /run/service/airspy_adsb | wc -l) != 0 ]]; then
+    "${s6wrap[@]}" echo "delaying restart by 30 seconds"
+    sleep 30
+fi
 
 #shellcheck disable=SC2016
-"${s6wrap[@]}" "${AIRSPY_ADSB_BIN}" "${AIRSPY_ADSB_CMD[@]}" &
-
-# trap will only work properly while the shell is running / waiting, not while another program is being foreground executed
-# the first wait exits due to the signal which is trapped, the 2nd wait actually waits for collectd to exit
-wait || wait || true
+exec "${s6wrap[@]}" "${AIRSPY_ADSB_BIN}" "${AIRSPY_ADSB_CMD[@]}"
