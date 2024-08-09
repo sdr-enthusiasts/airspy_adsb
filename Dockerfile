@@ -17,7 +17,7 @@ RUN set -x && \
   curl \
   --location \
   --output /tmp/airspy_adsb-linux-arm.tgz \
-  "https://github.com/wiedehopf/airspy-conf/raw/master/buster/airspy_adsb-linux-arm.tgz" \
+  "https://github.com/wiedehopf/airspy-conf/raw/master/bookworm/airspy_adsb-linux-arm.tgz" \
   && \
   tar \
   xvf /tmp/airspy_adsb-linux-arm.tgz \
@@ -41,7 +41,7 @@ RUN set -x && \
   curl \
   --location \
   --output /tmp/airspy_adsb-linux-armv7.tgz \
-  "https://github.com/wiedehopf/airspy-conf/raw/master/buster/airspy_adsb-linux-armv7.tgz" \
+  "https://github.com/wiedehopf/airspy-conf/raw/master/bookworm/airspy_adsb-linux-armv7.tgz" \
   && \
   tar \
   xvf /tmp/airspy_adsb-linux-armv7.tgz \
@@ -53,7 +53,7 @@ RUN set -x && \
   curl \
   --location \
   --output /tmp/airspy_adsb-linux-i386.tgz \
-  "https://github.com/wiedehopf/airspy-conf/raw/master/buster/airspy_adsb-linux-i386.tgz" \
+  "https://github.com/wiedehopf/airspy-conf/raw/master/bookworm/airspy_adsb-linux-i386.tgz" \
   && \
   tar \
   xvf /tmp/airspy_adsb-linux-i386.tgz \
@@ -65,7 +65,7 @@ RUN set -x && \
   curl \
   --location \
   --output /tmp/airspy_adsb-linux-nehalem.tgz \
-  "https://github.com/wiedehopf/airspy-conf/raw/master/buster/airspy_adsb-linux-nehalem.tgz" \
+  "https://github.com/wiedehopf/airspy-conf/raw/master/bookworm/airspy_adsb-linux-nehalem.tgz" \
   && \
   tar \
   xvf /tmp/airspy_adsb-linux-nehalem.tgz \
@@ -77,7 +77,7 @@ RUN set -x && \
   curl \
   --location \
   --output /tmp/airspy_adsb-linux-x86_64.tgz \
-  "https://github.com/wiedehopf/airspy-conf/raw/master/buster/airspy_adsb-linux-x86_64.tgz" \
+  "https://github.com/wiedehopf/airspy-conf/raw/master/bookworm/airspy_adsb-linux-x86_64.tgz" \
   && \
   tar \
   xvf /tmp/airspy_adsb-linux-x86_64.tgz \
