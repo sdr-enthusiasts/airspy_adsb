@@ -39,7 +39,6 @@ Note: the airspy_adsb environment variables in the example below follow [wiedeho
 services:
   airspy_adsb:
     image: ghcr.io/sdr-enthusiasts/airspy_adsb:latest
-    tty: true
     container_name: airspy_adsb
     hostname: airspy_adsb
     restart: always
@@ -68,7 +67,6 @@ services:
     # Note - if you want to enable telegraf for use with InfluxDB/Prometheus and Grafana,
     # use the following image instead:
     # image: ghcr.io/sdr-enthusiasts/docker-adsb-ultrafeeder:telegraf
-    tty: true
     container_name: ultrafeeder
     hostname: ultrafeeder
     restart: unless-stopped
