@@ -56,7 +56,7 @@ services:
       - AIRSPY_ADSB_RF_GAIN=auto
       - AIRSPY_ADSB_STATS=true
     volumes:
-      - /dev:/dev:ro
+      - /dev/bus/usb:/dev/bus/usb:ro
     tmpfs:
       - /run:exec,size=256M
       - /tmp:size=128M
@@ -176,8 +176,6 @@ services:
       - /opt/adsb/ultrafeeder/globe_history:/var/globe_history
       - /opt/adsb/ultrafeeder/graphs1090:/var/lib/collectd
       - /proc/diskstats:/proc/diskstats:ro
-      ### Don't map the host /dev into the container since the SDR(s) are handled in airspy_adsb / dump978
-      # - /dev:/dev:ro
     tmpfs:
       - /run:exec,size=256M
       - /tmp:size=128M
