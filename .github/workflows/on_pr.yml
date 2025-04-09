@@ -10,14 +10,10 @@ on:
     branches:
       - main
     # Don't trigger if it's just a documentation update
-    paths-ignore:
-      - "**.md"
-      - "**.MD"
+    paths:
       - "**.yml"
-      - "LICENSE"
-      - ".gitattributes"
-      - ".gitignore"
-      - ".dockerignore"
+      - "rootfs/**"
+      - "Dockerfile"
 
 jobs:
   shellcheck:
@@ -51,7 +47,10 @@ jobs:
       ghcr_repo_owner: ${{ github.repository_owner }}
       ghcr_repo: ${{ github.repository }}
       platform_linux_arm32v6_enabled: false
-      platform_linux_i386_enabled: true
+      platform_linux_i386_enabled: false
       get_version_method: git_commit_hash_short
+      build_version_specific: false
+      build_platform_specific: false
+      build_nohealthcheck: false
     secrets:
       ghcr_token: ${{ secrets.GITHUB_TOKEN }}
