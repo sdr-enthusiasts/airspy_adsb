@@ -45,16 +45,15 @@ services:
     device_cgroup_rules:
       - 'c 189:* rwm'
     environment:
-      - AIRSPY_ADSB_VERBOSE=true
-      - AIRSPY_ADSB_TIMEOUT=90
-      - AIRSPY_ADSB_FEC_BITS=1
-      - AIRSPY_ADSB_WHITELIST_THRESHOLD=5
-      - AIRSPY_ADSB_PREAMBLE_FILTER_NONCRC=8
       - AIRSPY_ADSB_CPUTIME_TARGET=80
       - AIRSPY_ADSB_PREAMBLE_FILTER_MAX=20
       - AIRSPY_ADSB_MLAT_FREQ=12
       - AIRSPY_ADSB_RF_GAIN=auto
+      - AIRSPY_ADSB_TIMEOUT=90
+      - AIRSPY_ADSB_WHITELIST_THRESHOLD=5
+      - AIRSPY_ADSB_PREAMBLE_FILTER_NONCRC=5
       - AIRSPY_ADSB_STATS=true
+      - AIRSPY_ADSB_VERBOSE=true
     volumes:
       - /dev/bus/usb:/dev/bus/usb:ro
     tmpfs:
