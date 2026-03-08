@@ -63,7 +63,10 @@ if [[ -n "$AIRSPY_ADSB_WHITELIST_THRESHOLD" ]]; then
 fi
 
 # Handle "-m"
-if [[ -n "$AIRSPY_ADSB_MLAT_FREQ" ]]; then
+if [[ -n "$AIRSPY_ADSB_SAMPLE_RATE" ]]; then
+    AIRSPY_ADSB_CMD+=("-m")
+    AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_SAMPLE_RATE}")
+elif [[ -n "$AIRSPY_ADSB_MLAT_FREQ" ]]; then
     AIRSPY_ADSB_CMD+=("-m")
     AIRSPY_ADSB_CMD+=("${AIRSPY_ADSB_MLAT_FREQ}")
 fi

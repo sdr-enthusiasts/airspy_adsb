@@ -10,26 +10,37 @@ It will provide BEAST protocol on TCP port `30005`.
 
 | Environment Variable                 | `airspy_adsb`</br>option | Description                                                                                                                         | Default                                                |
 | ------------------------------------ | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `AIRSPY_ADSB_SERIAL`                 | `-s`                     | Device serial number (add 0x at the start for hexadecimal serial numbers)                                                           | _unset_                                                |
 | `AIRSPY_ADSB_TIMEOUT`                | `-t`                     | Aircraft timeout in seconds                                                                                                         | `60`                                                   |
 | `AIRSPY_ADSB_RF_GAIN`                | `-g`                     | RF gain: `0` to `21` or `auto`                                                                                                      | `auto`                                                 |
-| `AIRSPY_ADSB_FEC_BITS`               | `-f`                     | Forward Error Correction (FEC) bits                                                                                                 | `1`                                                    |
-| `AIRSPY_ADSB_PREAMBLE_FILTER`        | `-e`                     | Preamble filter: `1` to `60`                                                                                                        | `4`                                                    |
 | `AIRSPY_ADSB_CPUTIME_TARGET`         | `-C`                     | CPU processing time target (percentage): `5` to `95`                                                                                | Disabled</br>_(adjusts preamble filter while running)_ |
 | `AIRSPY_ADSB_PREAMBLE_FILTER_MAX`    | `-E`                     | Maximum preamble filter when using CPU target: `1` to `60`                                                                          | `60`                                                   |
-| `AIRSPY_ADSB_PREAMBLE_FILTER_NONCRC` | `-P`                     | Non-CRC Preamble filter: `1` to `$AIRSPY_ADSB_PREAMBLE_FILTER`                                                                      | Disabled                                               |
+| `AIRSPY_ADSB_SAMPLE_RATE`            | `-m`                     | Sample rate in MHz: `12`, `20` or `24` (24 on Airspy R2 only) (old env var name MLAT_FREQ which will still work)                    | _unset_                                                |
+| `AIRSPY_ADSB_BIAS_TEE`               | `-b`                     | Set to `true` to enable Bias-Tee                                                                                                    | _unset_                                                |
+| `AIRSPY_ADSB_BIT_PACKING`            | `-p`                     | Set to `true` to enable Bit Packing                                                                                                 | _unset_                                                |
+| `AIRSPY_ADSB_SERIAL`                 | `-s`                     | Device serial number (add 0x at the start for hexadecimal serial numbers)                                                           | _unset_                                                |
+| `AIRSPY_ADSB_FEC_BITS`               | `-f`                     | Forward Error Correction (FEC) bits                                                                                                 | `1`                                                    |
 | `AIRSPY_ADSB_WHITELIST_THRESHOLD`    | `-w`                     | Whitelist threshold: `1` to `20`                                                                                                    | `5`                                                    |
-| `AIRSPY_ADSB_MLAT_FREQ`              | `-m`                     | MLAT frequency in MHz: `12`, `20` or `24` (Airspy R2 only)                                                                          | _unset_                                                |
+| `AIRSPY_ADSB_PREAMBLE_FILTER_NONCRC` | `-P`                     | Non-CRC Preamble filter: `1` to `$AIRSPY_ADSB_PREAMBLE_FILTER`                                                                      | Disabled                                               |
+| `AIRSPY_ADSB_PREAMBLE_FILTER`        | `-e`                     | Preamble filter: `1` to `60`                                                                                                        | `4`                                                    |
 | `AIRSPY_ADSB_VERBATIM_MODE`          | `-n`                     | Set to `true` to enable Verbatim mode                                                                                               | _unset_                                                |
-| `AIRSPY_ADSB_DX_MODE`                | `-x`                     | Set to `true` to enable DX mode                                                                                                     | _unset_                                                |
 | `AIRSPY_ADSB_REDUCE_IF_BW`           | `-r`                     | Set to `true` reduce the IF bandwidth to 4 MHz                                                                                      | _unset_                                                |
 | `AIRSPY_ADSB_RSSI_MODE`              | `-R`                     | RSSI mode: `snr` (ref = 42 dB), `rms` (default: rms)                                                                                | `rms`                                                  |
 | `AIRSPY_ADSB_IGNORE_DF_TYPES`        | `-D`                     | Ignore these DF types (comma separated list)                                                                                        | `24,25,26,27,28,29,30,31`                              |
-| `AIRSPY_ADSB_BIAS_TEE`               | `-b`                     | Set to `true` to enable Bias-Tee                                                                                                    | _unset_                                                |
-| `AIRSPY_ADSB_BIT_PACKING`            | `-p`                     | Set to `true` to enable Bit Packing                                                                                                 | _unset_                                                |
 | `AIRSPY_ADSB_VERBOSE`                | `-v`                     | Enable Verbose mode                                                                                                                 | _unset_                                                |
 | `AIRSPY_ADSB_STATS`                  | `-S`                     | Set to `true` to enable statistics in `/run/airspy_adsb` (this needs to be shared with a `tar1090` instance)                        | _unset_                                                |
 | `AIRSPY_ADSB_ARCH`                   | N/A                      | Forces a specific architecture binary. Supports `arm64`, `armv7`, `arm`, `nehalem`, `x86_64` or `i386`. If unset, will auto-detect. | _unset_                                                |
+| `AIRSPY_ADSB_DX_MODE`                | `-x`                     | Don't use this                                                                                                                      | _unset_                                                |
+## Performance Tuning notes
+
+It is recommended to leave everything at the settings you see in the yml below with the exception
+of:
+- AIRSPY_ADSB_PREAMBLE_FILTER_MAX (up to 60 if you don't care about CPU usage)
+- AIRSPY_ADSB_SAMPLE_RATE (see link below)
+- AIRSPY_ADSB_RF_GAIN (use auto first and if you like set a fixed setting 1 above or below what auto uses most of the time)
+- AIRSPY_ADSB_TIMEOUT (increase up to 300 for planes going in and out of coverage)
+
+Some more notes on this:
+<https://github.com/wiedehopf/airspy-conf?tab=readme-ov-file#performance-tuning-notes>
 
 ## Using with [`ultrafeeder` container](https://github.com/sdr-enthusiasts/docker-adsb-ultrafeeder)
 
@@ -45,9 +56,9 @@ services:
     device_cgroup_rules:
       - 'c 189:* rwm'
     environment:
-      - AIRSPY_ADSB_CPUTIME_TARGET=80
+      - AIRSPY_ADSB_CPUTIME_TARGET=90
       - AIRSPY_ADSB_PREAMBLE_FILTER_MAX=20
-      - AIRSPY_ADSB_MLAT_FREQ=12
+      - AIRSPY_ADSB_SAMPLE_RATE=12
       - AIRSPY_ADSB_RF_GAIN=auto
       - AIRSPY_ADSB_TIMEOUT=90
       - AIRSPY_ADSB_WHITELIST_THRESHOLD=5
