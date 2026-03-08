@@ -19,8 +19,8 @@ It will provide BEAST protocol on TCP port `30005`.
 | `AIRSPY_ADSB_BIT_PACKING`            | `-p`                     | Set to `true` to enable Bit Packing                                                                                                 | _unset_                                                |
 | `AIRSPY_ADSB_SERIAL`                 | `-s`                     | Device serial number (add 0x at the start for hexadecimal serial numbers)                                                           | _unset_                                                |
 | `AIRSPY_ADSB_FEC_BITS`               | `-f`                     | Forward Error Correction (FEC) bits                                                                                                 | `1`                                                    |
-| `AIRSPY_ADSB_WHITELIST_THRESHOLD`    | `-w`                     | Whitelist threshold: `1` to `20`                                                                                                    | `5`                                                    |
-| `AIRSPY_ADSB_PREAMBLE_FILTER_NONCRC` | `-P`                     | Non-CRC Preamble filter: `1` to `$AIRSPY_ADSB_PREAMBLE_FILTER`                                                                      | Disabled                                               |
+| `AIRSPY_ADSB_WHITELIST_THRESHOLD`    | `-w`                     | Whitelist threshold: `1` to `20` (recommendation: don't change)                                                                     | `5`                                                    |
+| `AIRSPY_ADSB_PREAMBLE_FILTER_NONCRC` | `-P`                     | Non-CRC Preamble filter: `1` to `$AIRSPY_ADSB_PREAMBLE_FILTER` (higher setting: more bogus non crc messages, recommended to set at 5)| Disabled                                               |
 | `AIRSPY_ADSB_PREAMBLE_FILTER`        | `-e`                     | Preamble filter: `1` to `60`                                                                                                        | `4`                                                    |
 | `AIRSPY_ADSB_VERBATIM_MODE`          | `-n`                     | Set to `true` to enable Verbatim mode                                                                                               | _unset_                                                |
 | `AIRSPY_ADSB_REDUCE_IF_BW`           | `-r`                     | Set to `true` reduce the IF bandwidth to 4 MHz                                                                                      | _unset_                                                |
@@ -61,7 +61,6 @@ services:
       - AIRSPY_ADSB_SAMPLE_RATE=12
       - AIRSPY_ADSB_RF_GAIN=auto
       - AIRSPY_ADSB_TIMEOUT=90
-      - AIRSPY_ADSB_WHITELIST_THRESHOLD=5
       - AIRSPY_ADSB_PREAMBLE_FILTER_NONCRC=5
       - AIRSPY_ADSB_STATS=true
       - AIRSPY_ADSB_VERBOSE=true
