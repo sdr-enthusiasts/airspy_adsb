@@ -2,7 +2,7 @@ FROM ghcr.io/sdr-enthusiasts/docker-baseimage:base
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# hadolint ignore=DL3008,DL3003,SC1091
+# hadolint ignore=DL3008,DL3003,SC1091,SC2068
 RUN set -x && \
   #
   KEPT_PACKAGES=() && \
