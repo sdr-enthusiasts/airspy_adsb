@@ -8,7 +8,7 @@ on:
 jobs:
   test_build:
     name: Test Image Build
-    uses: sdr-enthusiasts/common-github-workflows/.github/workflows/sdre.yml@6058dd5e8b524a61e553199444a4d8592dee6645 # ci/sdre-audit-and-s6-runtime-gating (PR #186, unmerged)
+    uses: sdr-enthusiasts/common-github-workflows/.github/workflows/sdre.yml@4cf063e5906338b3b92f0fe71d8dbae52c180d99 # main
     with:
       push_enabled: false
       ghcr_repo_owner: ${{ github.repository_owner }}
