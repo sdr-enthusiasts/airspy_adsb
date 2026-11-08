@@ -16,6 +16,8 @@ RUN set -x && \
   # Download airspy_adsb arm binary
   curl \
   --location \
+  --fail \
+  --retry 3 \
   --output /tmp/airspy_adsb-linux-arm.tgz \
   "https://github.com/wiedehopf/airspy-conf/raw/master/bookworm/airspy_adsb-linux-arm.tgz" \
   && \
@@ -28,6 +30,8 @@ RUN set -x && \
   # Download airspy_adsb arm64 binary
   curl \
   --location \
+  --fail \
+  --retry 3 \
   --output /tmp/airspy_adsb-linux-arm64.tgz \
   "https://github.com/wiedehopf/airspy-conf/raw/master/bookworm/airspy_adsb-linux-arm64.tgz" \
   && \
@@ -40,6 +44,8 @@ RUN set -x && \
   # Download airspy_adsb armv7 binary
   curl \
   --location \
+  --fail \
+  --retry 3 \
   --output /tmp/airspy_adsb-linux-armv7.tgz \
   "https://github.com/wiedehopf/airspy-conf/raw/master/bookworm/airspy_adsb-linux-armv7.tgz" \
   && \
@@ -52,6 +58,8 @@ RUN set -x && \
   # Download airspy_adsb i386 binary
   curl \
   --location \
+  --fail \
+  --retry 3 \
   --output /tmp/airspy_adsb-linux-i386.tgz \
   "https://github.com/wiedehopf/airspy-conf/raw/master/bookworm/airspy_adsb-linux-i386.tgz" \
   && \
@@ -64,6 +72,8 @@ RUN set -x && \
   # Download airspy_adsb nehalem binary
   curl \
   --location \
+  --fail \
+  --retry 3 \
   --output /tmp/airspy_adsb-linux-nehalem.tgz \
   "https://github.com/wiedehopf/airspy-conf/raw/master/bookworm/airspy_adsb-linux-nehalem.tgz" \
   && \
@@ -76,6 +86,8 @@ RUN set -x && \
   # Download airspy_adsb x86_64 binary
   curl \
   --location \
+  --fail \
+  --retry 3 \
   --output /tmp/airspy_adsb-linux-x86_64.tgz \
   "https://github.com/wiedehopf/airspy-conf/raw/master/bookworm/airspy_adsb-linux-x86_64.tgz" \
   && \
